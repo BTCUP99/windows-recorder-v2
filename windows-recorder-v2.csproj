@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>WindowsRecorder</AssemblyName>
+    <RootNamespace>windows_recorder_v2</RootNamespace>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Authors>BTCUP99</Authors>
+    <Company>WindowsRecorder</Company>
+    <Product>Windows 录音器 v2</Product>
+    <Description>Windows 系统声音和麦克风录音工具，支持 WAV/MP3 格式，明暗主题切换</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="NAudio.Wasapi" Version="2.2.1" />
+    <PackageReference Include="NAudio.Lame" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Themes\LightTheme.xaml"/>
+    <Resource Include="Themes\DarkTheme.xaml"/>
+  </ItemGroup>
+
+</Project>
