@@ -1,0 +1,82 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build -c Release --no-restore
+
+    - name: Publish
+      run: dotnet publish -c Release --self-contained true -r win-x64 -p:PublishSingleFile=true -o ./publish
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: WindowsRecorder-v1.0.0
+        path: ./publish/*.exe
+
+  release:
+    needs: build
+    runs-on: windows-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: WindowsRecorder-v1.0.0
+        path: ./publish
+
+    - name: Create Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        $version = $env:GITHUB_REF_NAME
+        gh release create $version --title "Windows 录音器 $version" --notes "Windows 录音器 v$version 发布
+
+        ## 功能
+        - 系统声音录制
+        - 麦克风录制
+        - 暂停/继续功能
+        - WAV/MP3 格式支持
+        - 明暗主题切换
+
+        ## 下载
+        下载 `WindowsRecorder.exe` 运行即可。
+        需要 .NET 8 Runtime 环境。"
+      shell: pwsh
+
+    - name: Upload Release asset
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        $version = $env:GITHUB_REF_NAME
+        gh release upload $version ./publish/WindowsRecorder.exe --clobber
+      shell: pwsh
